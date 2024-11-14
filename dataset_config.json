@@ -3,7 +3,7 @@
   "datasets": [
     {
       "id": "kontakt",
-      "path": "/home/ubuntu/stable-audio-tools/dataset_flat/",
+      "path": "/home/ubuntu/stable-audio-tools/dataset_flat_clean/",
       "custom_metadata_module": "custom_metadata.py"
     }
   ],
