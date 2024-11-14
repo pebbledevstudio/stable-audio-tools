@@ -1,0 +1,179 @@
+{
+  "model_type": "diffusion_cond",
+  "sample_size": 2097152,
+  "sample_rate": 44100,
+  "audio_channels": 2,
+  "model": {
+    "pretransform": {
+      "type": "autoencoder",
+      "iterate_batch": true,
+      "config": {
+        "encoder": {
+          "type": "oobleck",
+          "requires_grad": false,
+          "config": {
+            "in_channels": 2,
+            "channels": 128,
+            "c_mults": [
+              1,
+              2,
+              4,
+              8,
+              16
+            ],
+            "strides": [
+              2,
+              4,
+              4,
+              8,
+              8
+            ],
+            "latent_dim": 128,
+            "use_snake": true
+          }
+        },
+        "decoder": {
+          "type": "oobleck",
+          "config": {
+            "out_channels": 2,
+            "channels": 128,
+            "c_mults": [
+              1,
+              2,
+              4,
+              8,
+              16
+            ],
+            "strides": [
+              2,
+              4,
+              4,
+              8,
+              8
+            ],
+            "latent_dim": 64,
+            "use_snake": true,
+            "final_tanh": false
+          }
+        },
+        "bottleneck": {
+          "type": "vae"
+        },
+        "latent_dim": 64,
+        "downsampling_ratio": 2048,
+        "io_channels": 2
+      }
+    },
+    "conditioning": {
+      "configs": [
+        {
+          "id": "prompt",
+          "type": "t5",
+          "config": {
+            "t5_model_name": "t5-base",
+            "max_length": 128
+          }
+        },
+        {
+          "id": "seconds_start",
+          "type": "number",
+          "config": {
+            "min_val": 0,
+            "max_val": 512
+          }
+        },
+        {
+          "id": "seconds_total",
+          "type": "number",
+          "config": {
+            "min_val": 0,
+            "max_val": 512
+          }
+        }
+      ],
+      "cond_dim": 768
+    },
+    "diffusion": {
+      "cross_attention_cond_ids": [
+        "prompt",
+        "seconds_start",
+        "seconds_total"
+      ],
+      "global_cond_ids": [
+        "seconds_start",
+        "seconds_total"
+      ],
+      "type": "dit",
+      "config": {
+        "io_channels": 64,
+        "embed_dim": 1536,
+        "depth": 24,
+        "num_heads": 24,
+        "cond_token_dim": 768,
+        "global_cond_dim": 1536,
+        "project_cond_tokens": false,
+        "transformer_type": "continuous_transformer"
+      }
+    },
+    "io_channels": 64
+  },
+  "training": {
+    "use_ema": true,
+    "log_loss_info": false,
+    "optimizer_configs": {
+      "diffusion": {
+        "optimizer": {
+          "type": "AdamW",
+          "config": {
+            "lr": 5e-5,
+            "betas": [
+              0.9,
+              0.999
+            ],
+            "weight_decay": 1e-3
+          }
+        },
+        "scheduler": {
+          "type": "InverseLR",
+          "config": {
+            "inv_gamma": 1000000,
+            "power": 0.5,
+            "warmup": 0.99
+          }
+        }
+      }
+    },
+    "demo": {
+      "demo_every": 100,
+      "demo_steps": 250,
+      "num_demos": 4,
+      "demo_cond": [
+        {
+          "prompt": "summarize: A single note of a piano, providing a rich, resonant sound with deep bass and sparkling treble, capable of dynamic expression from soft and delicate to loud and powerful, making it versatile for classical, jazz, and modern music played at midi note 84 with velocity 127",
+          "seconds_start": 0,
+          "seconds_total": 6
+        },
+        {
+          "prompt": "summarize: A single note of a guitar, delivering a warm, resonant sound with plucked or strummed tones, ranging from mellow acoustic textures to bright, crisp harmonics, commonly used across folk, rock, and classical music played at midi note 40 with velocity 100",
+          "seconds_start": 0,
+          "seconds_total": 6
+        },
+        {
+          "prompt": "summarize: A single note of a violin, offering a warm and expressive bowed string sound with a smooth, lyrical quality, capable of intense vibrato and dynamic swells, capturing the soul of classical and orchestral music played at midi note 32 with velocity 75",
+          "seconds_start": 0,
+          "seconds_total": 6
+        },
+        {
+          "prompt": "summarize: A single note of a flute, producing a bright, airy tone with pure, smooth notes, capable of light, delicate melodies or rapid, agile passages, lending a graceful voice to classical and folk music played at midi note 55 with velocity 50",
+          "seconds_start": 0,
+          "seconds_total": 6
+        }
+      ],
+      "demo_cfg_scales": [
+        3,
+        6,
+        9
+      ]
+    }
+  }
+}
