@@ -11,9 +11,9 @@ for dir in "$base_dir"/*/; do
         dir_name=$(basename "$dir")
         
         # Create the output directory if it doesn't exist
-        mkdir -p "./$dir_name"
+        mkdir -p "./fp32/$dir_name"
         
         # Run the python script with the directory path
-        python zero_to_fp32.py "$dir" "./$dir_name"
+        python zero_to_fp32.py "$dir" "./fp32/$dir_name"
     fi
 done
