@@ -36,7 +36,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 def load_model(epoch):
     """Loads the model checkpoint corresponding to the given epoch."""
-    model_ckpt_file = f"epoch={epoch}.ckpt"
+    model_ckpt_file = f"models/epoch={epoch}.ckpt"
 
     print(f"Loading model: {model_ckpt_file}")
     checkpoint = torch.load(model_ckpt_file, map_location=device)
