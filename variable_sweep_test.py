@@ -53,11 +53,11 @@ def generate_audio(model, prompt, steps, cfg_scale):
     """Generates audio using the diffusion model."""
     full_prompt = f"Generate Drum Kit: {prompt}"  # Add prefix
 
-    conditioning = [[{
+    conditioning = [{
         "prompt": full_prompt,
         "seconds_start": 0,
         "seconds_total": duration_seconds  # Set duration to 47 seconds
-    }]]
+    }]
 
     print(f"Generating: {full_prompt} | Steps: {steps} | CFG: {cfg_scale}")
     
