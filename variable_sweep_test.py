@@ -36,10 +36,12 @@ os.makedirs(output_dir, exist_ok=True)
 
 def load_model(epoch):
     """Loads the model checkpoint corresponding to the given epoch."""
-    model_ckpt_file = f"models/epoch={epoch}.ckpt"
-
+    model_ckpt_file = f"s3://deep-fadr/sam/drumgpt-checkpoints/unwrapped_models/epoch={epoch}.ckpt"
+    tmp_path = f"/tmp/epoch={epoch}.ckpt"
     print(f"Loading model: {model_ckpt_file}")
-    checkpoint = torch.load(model_ckpt_file, map_location=device)
+    os.system(f"aws s3 cp {model_ckpt_file} {tmp_path}")
+    checkpoint = torch.load(tmp_path, map_location=device)
+    os.remove(tmp_path)
     model_state_dict = checkpoint["state_dict"]
 
     model = create_model_from_config(model_config)
