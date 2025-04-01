@@ -7,6 +7,6 @@ with open('/home/ubuntu/drumgpt_prompts.json', 'r') as f:
 def get_custom_metadata(info, audio):
     
     # Pass in the relative path of the audio file as the prompt
-    prompt = "Generate drum kit " + file_preset_breakdown_dict[info["relpath"]]
+    prompt = "Generate drum kit: " + file_preset_breakdown_dict[info["relpath"]]
     print(prompt)
     return {"prompt": prompt}

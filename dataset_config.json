@@ -3,7 +3,7 @@
   "datasets": [
     {
       "id": "melodics",
-      "path": "/home/ubuntu/kit_wavs/",
+      "path": "/home/ubuntu/kit_wavs",
       "custom_metadata_module": "custom_metadata.py"
     }
   ],

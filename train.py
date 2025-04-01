@@ -1,3 +1,14 @@
+import os
+os.environ["TORCHINDUCTOR_DISABLE"] = "1"
+os.environ["TORCH_COMPILE"] = "0"
+os.environ["TORCHINDUCTOR_DEV_DISABLE"] = "1"
+os.environ.pop("TORCH_LOGS", None)
+os.environ["PL_DISABLE_DDP"] = "0"
+os.environ["TRANSFORMERS_NO_DEEPSPEED"] = "1"
+os.environ["USE_DEEPSPEED"] = "0"
+os.environ["DEEPSPEED_DISABLE"] = "2"
+# Set the GPU you want to use. Replace "0" with the GPU number you want to test.  # Change this to 1, 2, etc., to test different GPUs
+
 from prefigure.prefigure import get_all_args, push_wandb_config
 import json
 import os
@@ -10,6 +21,11 @@ from stable_audio_tools.models import create_model_from_config
 from stable_audio_tools.models.utils import load_ckpt_state_dict, remove_weight_norm_from_model
 from stable_audio_tools.training import create_training_wrapper_from_config, create_demo_callback_from_config
 from stable_audio_tools.training.utils import copy_state_dict
+
+import faulthandler; faulthandler.enable()
+import torch
+torch.set_float32_matmul_precision("high")
+
 
 class ExceptionCallback(pl.Callback):
     def on_exception(self, trainer, module, err):
@@ -90,37 +106,24 @@ def main():
     push_wandb_config(wandb_logger, args_dict)
 
     #Set multi-GPU strategy if specified
-    if args.strategy:
-        if args.strategy == "deepspeed":
-            from pytorch_lightning.strategies import DeepSpeedStrategy
-            strategy = DeepSpeedStrategy(stage=2, 
-                                        contiguous_gradients=True, 
-                                        overlap_comm=True, 
-                                        reduce_scatter=True, 
-                                        reduce_bucket_size=5e8, 
-                                        allgather_bucket_size=5e8,
-                                        load_full_weights=True
-                                        )
-        else:
-            strategy = args.strategy
-    else:
-        strategy = 'ddp_find_unused_parameters_true' if args.num_gpus > 1 else "auto" 
+    strategy = 'ddp_find_unused_parameters_true' if args.num_gpus > 1 else "auto" 
 
     trainer = pl.Trainer(
         devices=args.num_gpus,
         accelerator="gpu",
-        num_nodes = args.num_nodes,
+        num_nodes=args.num_nodes,
         strategy=strategy,
-        precision=args.precision,
-        accumulate_grad_batches=args.accum_batches, 
+        precision="32",
+        accumulate_grad_batches=args.accum_batches,
         callbacks=[ckpt_callback, demo_callback, exc_callback, save_model_config_callback],
         logger=wandb_logger,
         log_every_n_steps=1,
         max_epochs=10000000,
         default_root_dir=args.save_dir,
         gradient_clip_val=args.gradient_clip_val,
-        reload_dataloaders_every_n_epochs = 0
+        reload_dataloaders_every_n_epochs=0
     )
+
 
     trainer.fit(training_wrapper, train_dl, ckpt_path=args.ckpt_path if args.ckpt_path else None)
 
