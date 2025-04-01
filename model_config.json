@@ -1,8 +1,8 @@
 {
   "model_type": "diffusion_cond",
-  "sample_size": 2097152,
+  "sample_size": 793800,
   "sample_rate": 44100,
-  "audio_channels": 2,
+  "audio_channels": 1,
   "model": {
     "pretransform": {
       "type": "autoencoder",
@@ -149,30 +149,30 @@
       "num_demos": 4,
       "demo_cond": [
         {
-          "prompt": "summarize: A single note of a piano, providing a rich, resonant sound with deep bass and sparkling treble, capable of dynamic expression from soft and delicate to loud and powerful, making it versatile for classical, jazz, and modern music played at midi note 84 with velocity 127",
+          "prompt": "Generate drum kit: atmospheric and hard-hitting drum sounds suitable for contemporary R&B",
           "seconds_start": 0,
-          "seconds_total": 6
+          "seconds_total": 18
         },
         {
-          "prompt": "summarize: A single note of a guitar, delivering a warm, resonant sound with plucked or strummed tones, ranging from mellow acoustic textures to bright, crisp harmonics, commonly used across folk, rock, and classical music played at midi note 40 with velocity 100",
+          "prompt": "Generate drum kit: richly layered drum sounds for dynamic rock compositions",
           "seconds_start": 0,
-          "seconds_total": 6
+          "seconds_total": 18
         },
         {
-          "prompt": "summarize: A single note of a violin, offering a warm and expressive bowed string sound with a smooth, lyrical quality, capable of intense vibrato and dynamic swells, capturing the soul of classical and orchestral music played at midi note 32 with velocity 75",
+          "prompt": "Generate drum kit: Authentic studio-recorded percussion with a focus on warmth and depth",
           "seconds_start": 0,
-          "seconds_total": 6
+          "seconds_total": 18
         },
         {
-          "prompt": "summarize: A single note of a flute, producing a bright, airy tone with pure, smooth notes, capable of light, delicate melodies or rapid, agile passages, lending a graceful voice to classical and folk music played at midi note 55 with velocity 50",
+          "prompt": "Generate drum kit: reverb-infused electronic beats capturing the essence of techno",
           "seconds_start": 0,
-          "seconds_total": 6
+          "seconds_total": 18
         }
       ],
       "demo_cfg_scales": [
+        0,
         3,
-        6,
-        9
+        7
       ]
     }
   }
