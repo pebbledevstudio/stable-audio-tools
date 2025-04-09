@@ -8,10 +8,18 @@ from stable_audio_tools.models.factory import create_model_from_config
 from stable_audio_tools.inference.generation import generate_diffusion_cond
 
 # Define hyperparameters for sweeping
-Epochs = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
-CFG = [0, 1, 2, 3]
-Prompts = ["techno", "tech house", "rock and roll", "r&b", "super dead drums", 
-           "trap", "drums that smack", "country", "r&b", "blues", "soul"]
+Epochs = [100, 200, 400, 800, 1600, 3200, 6400]
+CFG = [0, 1, 3, 7, 10]
+Prompts = ["rock and roll", 
+           "trance", 
+           "dubstep",
+           "hip hop",
+           "trap",
+           "acoustic",
+           "atmospheric and hard-hitting drum sounds suitable for contemporary R&B",
+           "richly layered drum sounds for dynamic rock compositions", 
+           "Authentic studio-recorded percussion with a focus on warmth and depth", 
+           "reverb-infused electronic beats capturing the essence of techno"]
 Steps = [50, 100, 250]
 
 # Set device
@@ -27,7 +35,7 @@ with open(model_config_file, "r") as f:
     model_config = json.load(f)
 
 sample_rate = model_config["sample_rate"]
-duration_seconds = 47  # Set duration to 47 seconds
+duration_seconds = 18  # Set duration to 47 seconds
 sample_size = int(sample_rate * duration_seconds)
 
 # Directory to save audio outputs
@@ -36,7 +44,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 def load_model(epoch):
     """Loads the model checkpoint corresponding to the given epoch."""
-    model_ckpt_file = f"s3://deep-fadr/sam/drumgpt-checkpoints/unwrapped_models/epoch={epoch}.ckpt"
+    model_ckpt_file = f"s3://deep-fadr/sam/drumgpt-checkpoints/v1.1/unwrapped_models//{epoch}.ckpt"
     tmp_path = f"/tmp/epoch={epoch}.ckpt"
     print(f"Loading model: {model_ckpt_file}")
     os.system(f"aws s3 cp {model_ckpt_file} {tmp_path}")
@@ -53,7 +61,7 @@ def load_model(epoch):
 
 def generate_audio(model, prompt, steps, cfg_scale):
     """Generates audio using the diffusion model."""
-    full_prompt = f"Generate Drum Kit: {prompt}"  # Add prefix
+    full_prompt = f"Generate drum kit: {prompt}"  # Add prefix
 
     conditioning = [{
         "prompt": full_prompt,
