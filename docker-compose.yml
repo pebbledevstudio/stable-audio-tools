@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  stable-audio-training:
+    build: .
+    container_name: stable-audio-tools
+    volumes:
+      # Mount the current directory to preserve checkpoints and logs
+      - ./checkpoints:/app/checkpoints
+      - ./wandb:/app/wandb
+      # Mount dataset directory if you have local datasets
+      - ./dataset_flat_clean:/app/dataset_flat_clean
+      # Mount model checkpoint file
+      - ./model.ckpt:/app/model.ckpt
+    environment:
+      # Set environment variables for GPU access
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    # Override default command with custom arguments
+    # Example: docker-compose run stable-audio-training python train.py --batch-size 4 --num-gpus 2
+    command: ["python", "train.py"]
+    
+    # For interactive debugging
+    stdin_open: true
+    tty: true
+
+

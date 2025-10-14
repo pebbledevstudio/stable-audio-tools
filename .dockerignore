@@ -1,0 +1,29 @@
+# Ignore unnecessary files for Docker build
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.git
+.gitignore
+README.md
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Virtual environment (we'll create a new one in the container)
+venv/
+
+# Checkpoints and logs (will be mounted as volumes)
+checkpoints/
+wandb/
+
+# Large model files (should be downloaded or mounted)
+*.ckpt
+*.safetensors
+
+# Documentation
+docs/
+
+
